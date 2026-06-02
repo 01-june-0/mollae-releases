@@ -6,6 +6,53 @@ Mollae (molstagram) 의 버전별 변경사항. 최신순.
 
 ---
 
+## v0.8.5 — CHANGELOG/스크린샷 sync 자동화 (2026-06)
+
+v0.8.4 의 two-repo split 후속 — private `mollae` 의 문서를 public `mollae-releases`
+로 release 때마다 자동 동기화.
+
+### CI (build.yml)
+- 신규 \`sync-docs\` job — tag push 시:
+  - private \`mollae\` (이 repo) checkout
+  - public \`mollae-releases\` checkout (RELEASES_TOKEN)
+  - \`docs/CHANGELOG.md\` + \`docs/screenshots/*.png\` 복사 → 변경 있으면 commit + push
+- \`release\` job 의 needs 를 \`[build, sync-docs]\` 로 — sync 가 먼저 끝나 tag 가 sync 반영된 HEAD 를 가리킴
+- **README 는 sync 제외** — private(개발용)·public(다운로드용) 이 의도적으로 다름
+
+### 효과
+이제 릴리즈 시 mollae-releases 의 CHANGELOG·스크린샷이 자동으로 최신화됨.
+v0.8.4 까지는 수동 1회 복사였으나 v0.8.5 부터 무인 동기화.
+
+배포 인프라 변경만 — 앱 데이터·기능 변경 없음.
+
+---
+
+## v0.8.4 — 소스/릴리즈 분리 (two-repo split) (2026-06)
+
+소스 코드는 비공개로 유지하면서 릴리즈·문서는 공개하기 위한 인프라 변경.
+
+### 구조
+```
+01-june-0/mollae          → PRIVATE (소스 + 히스토리)
+   CI 가 빌드 → cross-repo push ↓
+01-june-0/mollae-releases → PUBLIC (README · 스크린샷 · CHANGELOG · Releases)
+```
+
+### CI (build.yml)
+- release job 이 \`softprops/action-gh-release@v2\` 의 \`repository: 01-june-0/mollae-releases\` + \`token: secrets.RELEASES_TOKEN\` 으로 **cross-repo push**
+- Actions 기본 \`GITHUB_TOKEN\` 은 자기 repo 권한만 있어 PAT (mollae-releases Contents:write) 필요
+- 태그(v*)는 mollae-releases 에 자동 생성, draft release 로 산출물 업로드
+
+### 자동 업데이트 (electron-builder.yml)
+- \`publish.repo\`: \`mollae\` → \`mollae-releases\`
+- 자동 업데이트가 public 인 mollae-releases 의 latest release 를 익명 접근으로 봄
+- **기존 v0.8.3 이하 설치본은 새 채널로 자동 전환되지 않음** (알파 단계라 transition 생략) — 기존 사용자는 mollae-releases 에서 한 번 수동 재설치 필요
+
+### 마이그레이션
+앱 데이터(settings/notes/PIN) 변경 없음. 배포 인프라만 변경.
+
+---
+
 ## v0.8.3 — README hotfix (Boss Key 단축키 표기 통일) (2026-06)
 
 v0.8.1 의 README 작성 중 disguise 별 섹션 (VSCode/Terminal/Calendar/Gmail) 4 곳에서 Boss Key 단축키를 \`Cmd+B\` 로 잘못 표기. 실제 단축키 \`\` Cmd+\` \`\` (백틱) 으로 통일.
