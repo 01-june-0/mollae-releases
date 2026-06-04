@@ -6,6 +6,75 @@ Mollae (molstagram) 의 버전별 변경사항. 최신순.
 
 ---
 
+## v0.9 — Slack 위장 (6번째 disguise) + Gmail·Calendar 로고 폴리시 (2026-06)
+
+여섯 번째 disguise **Slack** 추가. Terminal(v0.6)·Gmail(v0.8) 의 단일 disguise
+사이클 패턴을 그대로 따름. Slack 은 Google 제품이 아니므로 `disguises/slack/`
+standalone 디렉토리 + 자체 `--sl-*` CSS 변수(어버진 사이드바)로 구성 — Terminal 과
+같은 비의존 패턴. 타겟 페르소나: **메신저 헤비 직군 (대부분의 사무직)**.
+
+### SL0+SL1 — DisguiseId 확장·전 wiring + chrome 4종 정교화
+- `DisguiseId`: `... | 'slack'` (총 6종). `scenarios` / `customScenarioIds` /
+  `Notes` / `favoriteScenarios` 모두 slack 슬롯 추가. 구버전 settings 는 default
+  spread 로 자동 마이그레이션 (메모·CSV·PIN 보존).
+- 6종 분기 갱신: 설정 위장 dropdown(+hint·즐겨찾기 라벨) / MemoSearch 필터 chip·
+  배지·시나리오 옵션 / LockScreen primaryTitle / ShortcutHelpModal / App Cmd+P 체인 /
+  toast 라벨.
+- chrome 4종 (`disguises/slack/`):
+  - **SlackTitlebar** — 어버진 슬림 드래그 바 (scenario-agnostic)
+  - **SlackToolbar** — 상단 전역 검색바, activeSheetId 구독으로 활성 워크스페이스명 동기화
+  - **SlackBody** — 워크스페이스 rail + 접이식 채널 사이드바(presence·멘션 배지) +
+    메시지 pane(날짜 구분선·메시지 그룹핑·hover 액션·리액션·스레드·봇 첨부 카드) + composer
+  - **SlackStatusBar** — 연결 상태 + 워크스페이스(시트) 전환 + ⌘P 힌트
+
+### SL2 — 시나리오 4종 + dateShift
+| id | 워크스페이스 | 페르소나 |
+|---|---|---|
+| startup-team | Pretzel Labs | 스타트업 전직군 (캐주얼) |
+| corporate-team | 한빛커머스 | 대기업 사무직·매니저 (공지·결재·@멘션) |
+| dev-team | Acme Eng | 개발자·데브옵스 (GitHub/CI/Sentry/Argo 봇 첨부) |
+| remote-agency | Driftwood Studio | 원격·에이전시 (분산팀·비동기·외부 게스트) |
+
+Calendar/Gmail 의 CAL2.1 dateShift 와 동일 패턴(slack-local, google 비의존) —
+anchorDateIso↔today diff 만큼 모든 timeIso 를 shift, `(id, todayKey)` 캐시.
+
+### SL3 — Boss overlay(허들) + Cmd+P Quick Switcher
+- **SlackBossOverlay**: 풀스크린 가짜 허들(음성통화). `{workspace} · 허들 · #channel`
+  + mm:ss 라이브 타이머, 참가자 그리드(봇 제외 사람 작성자 + 나, 한 명 speaking ring),
+  컨트롤 바 + 빨간 나가기.
+- **SlackQuickSwitcher** (Cmd+P): Slack Cmd+K 풍 — 전 시나리오 채널·메시지 fuzzy
+  검색 + 시나리오 점프. App 의 printPreview 체인에 slack 분기 연결.
+
+### SL4 — 메시지 메모 dialog
+- **SlackMessageDialog**: 메시지 더블클릭(또는 hover 📝) → Slack 스레드 풍 모달 +
+  메모 textarea. key `MSG<id>`, `notes['slack'][scenario]`. Cmd+Enter/Tab/blur/Esc/
+  바깥 클릭 저장. 메모 있는 행 노랑 하이라이트. focusCell `MSG<id>` 매칭 시 자동 오픈
+  (MemoSearch 점프).
+
+### Gmail·Calendar 헤더 로고 폴리시
+헤더 로고가 워드마크와 따로 노는(높이·정렬·디자인) 문제 수정:
+- GoogleHeader 의 `fontSize:28` 로고 래퍼 제거 → 로고 SVG 자체 크기로 수직 중앙 정렬
+- Gmail: 무지개 그라디언트 'M' 박스 → 흰 봉투 + 4색 'M' SVG
+- Calendar: 두꺼운 파란 외곽선 '27'(하드코딩) → 흰 카드 + 파란 헤더 스트립 + 오늘 날짜(동적) SVG
+
+### 마이그레이션 안전성
+v0.8.x → v0.9 자동 — 누락된 slack 슬롯(scenarios/customScenarioIds/notes/
+favoriteScenarios)이 기본값으로 채워짐. 메모·CSV·시트 매핑·PIN 보존. backup
+roundtrip(scripts/verify-backup-roundtrip.mjs) 은 6종 환경에서도 disguise-agnostic
+설계로 통과.
+
+### v0.4 → v0.9 disguise 라인업
+| disguise | persona | v |
+|---|---|---|
+| Excel | 사무직·마케팅 | v0.1 |
+| VSCode | 개발자 | v0.4 |
+| Terminal | 데브옵스·SRE | v0.6 |
+| Google Calendar | 사무직·PM·영업 | v0.8 |
+| Gmail | 매니저·CS·세일즈 | v0.8 |
+| **Slack** | 메신저 헤비 직군 | **v0.9** |
+
+---
+
 ## v0.8.6 — macOS "손상됨" 차단 hotfix (ad-hoc 서명) (2026-06)
 
 Apple Silicon 사용자가 설치 시 **"‘Mollae’은(는) 손상되었기 때문에 열 수 없습니다"**
