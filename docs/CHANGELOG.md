@@ -6,6 +6,47 @@ Mollae (molstagram) 의 버전별 변경사항. 최신순.
 
 ---
 
+## v0.8.6 — macOS "손상됨" 차단 hotfix (ad-hoc 서명) (2026-06)
+
+Apple Silicon 사용자가 설치 시 **"‘Mollae’은(는) 손상되었기 때문에 열 수 없습니다"**
+로 실행이 막히던 문제 수정.
+
+### 원인
+- `electron-builder.yml` 의 `mac.identity: null` → 빌더가 코드서명 단계를 건너뜀
+- Electron 바이너리의 linker ad-hoc 서명만 남는데, 빌더가 번들을 수정(아이콘·
+  Info.plist·rename)하면서 그 서명이 **무효화** (`codesign --verify --strict` 가
+  `code has no resources but signature indicates they must be present` 로 실패)
+- macOS(특히 arm64)는 서명이 유효하지 않으면 단순 unsigned 보다 강하게 "손상됨"
+  으로 차단
+
+### Fix
+- 신규 `scripts/mac-adhoc-sign.cjs` — electron-builder `afterPack` 훅
+  - darwin 빌드에 한해 `codesign --force --deep --sign -` 로 번들 전체 ad-hoc 재서명
+  - 직후 `codesign --verify --deep --strict` 로 검증 — 실패 시 빌드 중단
+    (깨진 서명이 릴리즈되지 않게)
+- `electron-builder.yml` 에 `afterPack: scripts/mac-adhoc-sign.cjs` 등록
+
+### 한계 & README 보강
+- Developer ID 서명/notarization 은 아니므로 다운로드한 DMG 에는 quarantine 가 붙어
+  Gatekeeper "확인되지 않은 개발자" 경고는 남음 (이전의 "손상됨" 보다 약한 단계)
+- README 설치 안내에 우클릭 → 열기 / "확인 없이 열기" / `xattr -cr` 워크어라운드 추가
+- **v0.8.5 이하 기존 설치본**은 ad-hoc 서명 전 빌드라 여전히 "손상됨" 이 뜰 수 있음 —
+  v0.8.6 이상 재설치 또는 `xattr -cr` 후 우클릭 → 열기 안내
+
+### CI — artifact storage quota 정리 (build.yml)
+릴리즈 시도 중 발견: 매 PR·push 빌드마다 dmg/exe 를 14일 보관 artifact 로 업로드해
+**296개·~40GB 누적** → Actions artifact storage quota 초과로 업로드 자체가 실패하고
+있었음(서명 빌드는 정상, 업로드 단계에서만 실패).
+- 산출물은 어차피 `mollae-releases` Release 에 올라가므로 artifact 는 중복 →
+  `upload-artifact` 스텝 + 별도 `release`(download-artifact) job **제거**
+- tag push 시 각 build job(mac·win)이 dist 를 **곧장 mollae-releases draft release**
+  로 publish (action-gh-release upsert). PR/main push 는 빌드·타입체크 검증만.
+- 기존 누적 artifact 296개 전량 삭제로 quota 회수
+
+앱 데이터·기능 변경 없음 — 빌드/서명/릴리즈 파이프라인만 변경.
+
+---
+
 ## v0.8.5 — CHANGELOG/스크린샷 sync 자동화 (2026-06)
 
 v0.8.4 의 two-repo split 후속 — private `mollae` 의 문서를 public `mollae-releases`
