@@ -1,7 +1,7 @@
 # Mollae
 
 > **회사 모니터에 띄워놔도 곁눈질로는 일하는 화면처럼 보이는** Instagram · Threads · X 데스크탑 뷰어.
-> macOS · Windows 겸용. 5 가지 위장 모드 + PIN 잠금 + Boss Key.
+> macOS · Windows 겸용. 6 가지 위장 모드 + PIN 잠금 + Boss Key.
 
 [![latest release](https://img.shields.io/github/v/release/01-june-0/mollae-releases?display_name=tag)](https://github.com/01-june-0/mollae-releases/releases/latest)
 
@@ -16,8 +16,9 @@
     <td><img src="docs/screenshots/terminal-main.png" alt="Terminal 위장" /></td>
   </tr>
   <tr>
-    <td colspan="2"><img src="docs/screenshots/gcalendar-main.png" alt="Google Calendar 위장" /></td>
+    <td><img src="docs/screenshots/gcalendar-main.png" alt="Google Calendar 위장" /></td>
     <td><img src="docs/screenshots/gmail-main.png" alt="Gmail 위장" /></td>
+    <td><img src="docs/screenshots/slack-main.png" alt="Slack 위장" /></td>
   </tr>
 </table>
 
@@ -59,7 +60,7 @@
 
 ---
 
-## 🎭 5 가지 위장 모드 — 직군에 맞게 선택
+## 🎭 6 가지 위장 모드 — 직군에 맞게 선택
 
 | 위장 | 누구에게 |
 |---|---|
@@ -68,6 +69,7 @@
 | **터미널 에뮬레이터** | 데브옵스·SRE (cross-platform 다크) |
 | **Google Calendar** | PM·영업·일정 헤비 사용자 |
 | **Gmail** | 매니저·CS·세일즈·이메일 헤비 |
+| **Slack** | 메신저 헤비 직군 (대부분의 사무직) |
 
 옵션 → 일반 → 위장 dropdown 에서 즉시 전환. 시트별로 각 위장의 시나리오를 따로 저장하므로, 같은 사람이 여러 분기를 운영할 수 있음.
 
@@ -96,11 +98,16 @@
 |---|---|
 | 받은편지함 · 카테고리 탭 · 라벨 · 4 시나리오 | `` Cmd+` `` — 가짜 메일 작성 풀스크린 |
 
+### Slack 위장
+| ![slack-main](docs/screenshots/slack-main.png) | ![slack-huddle-boss](docs/screenshots/slack-huddle-boss.png) |
+|---|---|
+| 어버진 사이드바 · 채널/DM · 스레드 · 봇 첨부 · 4 시나리오 | `` Cmd+` `` — 풀스크린 허들(음성통화) 화면 |
+
 ---
 
 ## 🎯 컨셉
 
-평소엔 위장 화면 (Excel / VSCode / Terminal / Calendar / Gmail) 으로 가득. 마우스를 우측 하단의 호버 영역에 올리면 그 자리에 SNS 피드 — Instagram · Threads · X — 가 펼쳐짐. 곁눈질로는 위장 앱.
+평소엔 위장 화면 (Excel / VSCode / Terminal / Calendar / Gmail / Slack) 으로 가득. 마우스를 우측 하단의 호버 영역에 올리면 그 자리에 SNS 피드 — Instagram · Threads · X — 가 펼쳐짐. 곁눈질로는 위장 앱.
 
 누가 다가오면 단축키 한 번에:
 - **Boss Key** (`` Cmd+` ``) — 위장별 풀스크린 대피 화면 (일정표 / 빌드 로그 / npm install / Meet 회의 / 새 메일 작성)
@@ -129,6 +136,7 @@
 - **Terminal** → fzf 풍 history 검색 (시나리오 점프)
 - **Calendar** → 이벤트 검색
 - **Gmail** → 메일 검색
+- **Slack** → Quick Switcher (채널·메시지 검색)
 
 모든 단축키는 옵션 → 단축키에서 변경 가능 (Electron accelerator 표기법).
 
@@ -165,6 +173,7 @@
 | **v0.6** | **Terminal 위장** (시나리오 6종) |
 | **v0.7** | 일관성 정착 (5 disguise 사이 UX 통합) |
 | **v0.8** | **Google Calendar** + **Gmail** (각 시나리오 4종) |
+| **v0.9** | **Slack 위장** (시나리오 4종 · 허들 · Quick Switcher · 메시지 메모) + Gmail·Calendar 로고 폴리시 |
 
 전체 변경 이력: [`docs/CHANGELOG.md`](docs/CHANGELOG.md)
 
